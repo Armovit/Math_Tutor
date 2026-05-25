@@ -1,0 +1,165 @@
+﻿<UserControl x:Class="MathTutor.Wpf.Views.TaskManagementView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:MathTutor.Wpf.Controls">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.15*" />
+            <ColumnDefinition Width="0.95*" />
+        </Grid.ColumnDefinitions>
+
+        <Border Style="{StaticResource SurfaceCard}" Margin="0,0,18,0">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Top" Margin="0,0,0,18">
+                    <TextBlock Text="Вопросы и задания" Style="{StaticResource Text.H2}" Margin="0,0,0,6" />
+                    <TextBlock Text="Здесь добавляются вопросы к тестам. Сначала выберите тест в редакторе справа, затем сохраните вопрос." Style="{StaticResource Text.Caption}" Margin="0,0,0,16" />
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.2*" />
+                            <ColumnDefinition Width="1.4*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="Поиск" Style="{StaticResource Text.Caption}" />
+                        <TextBox Grid.Row="1" Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" Margin="0,6,10,0" />
+
+                        <TextBlock Grid.Column="1" Text="Материал или тест" Style="{StaticResource Text.Caption}" />
+                        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Materials}" SelectedItem="{Binding SelectedFilterMaterial}" DisplayMemberPath="Title" Margin="0,6,10,0" />
+
+                        <TextBlock Grid.Column="2" Text="Сложность" Style="{StaticResource Text.Caption}" />
+                        <ComboBox Grid.Row="1" Grid.Column="2" ItemsSource="{Binding DifficultyFilters}" SelectedItem="{Binding DifficultyFilter}" Margin="0,6,10,0" />
+
+                        <TextBlock Grid.Column="3" Text="Тип ответа" Style="{StaticResource Text.Caption}" />
+                        <ComboBox Grid.Row="1" Grid.Column="3" ItemsSource="{Binding AnswerTypeFilters}" SelectedItem="{Binding AnswerTypeFilter}" Margin="0,6,0,0" />
+                    </Grid>
+
+                    <UniformGrid Columns="3">
+                        <Button Content="Найти" Command="{Binding ApplyFiltersCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,0" />
+                        <Button Content="Сбросить" Command="{Binding ResetFiltersCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,0" />
+                        <Button Content="Новый вопрос" Command="{Binding NewTaskCommand}" Style="{StaticResource PrimaryButton}" />
+                    </UniformGrid>
+                </StackPanel>
+
+                <DataGrid ItemsSource="{Binding Tasks}" SelectedItem="{Binding SelectedTask}" IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Материал" Binding="{Binding MaterialTitle}" Width="1.3*" />
+                        <DataGridTextColumn Header="Вопрос" Binding="{Binding Title}" Width="1.5*" />
+                        <DataGridTextColumn Header="Тип ответа" Binding="{Binding AnswerType}" Width="Auto" />
+                        <DataGridTextColumn Header="Балл" Binding="{Binding MaxScore}" Width="Auto" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+        </Border>
+
+        <Border Grid.Column="1" Style="{StaticResource SurfaceCard}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="Редактор вопроса" Style="{StaticResource Text.H2}" Margin="0,0,0,6" />
+                    <TextBlock Text="Выберите сохранённый тест или практический материал, к которому относится вопрос." Style="{StaticResource Text.Caption}" Margin="0,0,0,16" />
+
+                    <Border Style="{StaticResource InlinePanel}" Margin="0,0,0,16">
+                        <TextBlock Text="Как создать тест: 1) в «Материалах» нажмите «Новый тест» и сохраните карточку; 2) здесь нажмите «Новый вопрос», выберите этот тест и добавьте вопросы." Style="{StaticResource Text.Body}" TextWrapping="Wrap" />
+                    </Border>
+
+                    <TextBlock Text="Материал или тест" Style="{StaticResource Text.Caption}" />
+                    <ComboBox ItemsSource="{Binding Materials}" SelectedItem="{Binding SelectedMaterial}" DisplayMemberPath="Title" Margin="0,4,0,12" />
+
+                    <TextBlock Text="Название вопроса" Style="{StaticResource Text.Caption}" />
+                    <DockPanel Margin="0,4,0,12">
+                        <Button DockPanel.Dock="Right" Content="LaTeX" Click="OpenTitleLatex_Click" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0" />
+                        <TextBox x:Name="TitleTextBox" Text="{Binding EditTitle, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+
+                    <TextBlock Text="Условие" Style="{StaticResource Text.Caption}" />
+                    <DockPanel Margin="0,4,0,12">
+                        <Button DockPanel.Dock="Right" Content="LaTeX" Click="OpenQuestionLatex_Click" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0" />
+                        <TextBox x:Name="QuestionTextBox" Text="{Binding EditQuestion, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="112" TextWrapping="Wrap" />
+                    </DockPanel>
+
+                    <Border Style="{StaticResource InlinePanel}" Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="Предпросмотр условия" Style="{StaticResource Text.Caption}" Margin="0,0,0,6" />
+                            <controls:LatexTextBlock Text="{Binding EditQuestion}" Foreground="{DynamicResource Brush.TextPrimary}" FontSize="15" TextLineHeight="24" FormulaFontSize="22" MinHeight="72" />
+                        </StackPanel>
+                    </Border>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Margin="0,0,8,0">
+                            <TextBlock Text="Тип ответа" Style="{StaticResource Text.Caption}" />
+                            <ComboBox ItemsSource="{Binding AnswerTypes}" SelectedItem="{Binding EditAnswerType}" Margin="0,4,0,12" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                            <TextBlock Text="Сложность" Style="{StaticResource Text.Caption}" />
+                            <ComboBox ItemsSource="{Binding DifficultyLevels}" SelectedItem="{Binding EditDifficulty}" Margin="0,4,0,12" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Style="{StaticResource InlinePanel}" Visibility="{Binding UsesAnswerOptions, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="Варианты ответа" Style="{StaticResource Text.H3}" Margin="0,0,0,8" />
+                            <ItemsControl ItemsSource="{Binding EditOptions}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <CheckBox IsChecked="{Binding IsCorrect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                            <TextBox Grid.Column="1" Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MinHeight="38" />
+                                            <Button Grid.Column="2" Content="Удалить" Command="{Binding DataContext.RemoveOptionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <DockPanel Margin="0,10,0,0">
+                                <Button DockPanel.Dock="Right" Content="Добавить" Command="{Binding AddOptionCommand}" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0" />
+                                <Button DockPanel.Dock="Right" Content="LaTeX" Click="OpenOptionLatex_Click" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0" />
+                                <TextBox x:Name="OptionTextBox" Text="{Binding NewOptionText, UpdateSourceTrigger=PropertyChanged}" />
+                            </DockPanel>
+                            <TextBlock Text="Поставьте галочку у правильного ответа. Для одиночного выбора сохранится один правильный вариант." Style="{StaticResource Text.Caption}" Margin="0,8,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="Правильный ответ" Style="{StaticResource Text.Caption}" />
+                    <DockPanel Margin="0,4,0,12">
+                        <Button DockPanel.Dock="Right" Content="LaTeX" Click="OpenCorrectAnswerLatex_Click" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0" />
+                        <TextBox x:Name="CorrectAnswerTextBox" Text="{Binding EditCorrectAnswer, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+
+                    <TextBlock Text="Максимальный балл" Style="{StaticResource Text.Caption}" />
+                    <TextBox Text="{Binding EditMaxScore, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,12" />
+
+                    <TextBlock Text="Пояснение после ответа" Style="{StaticResource Text.Caption}" />
+                    <DockPanel Margin="0,4,0,12">
+                        <Button DockPanel.Dock="Right" Content="LaTeX" Click="OpenExplanationLatex_Click" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0" />
+                        <TextBox x:Name="ExplanationTextBox" Text="{Binding EditExplanation, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="82" TextWrapping="Wrap" />
+                    </DockPanel>
+
+                    <Border Style="{StaticResource InlinePanel}" Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="Предпросмотр пояснения" Style="{StaticResource Text.Caption}" Margin="0,0,0,6" />
+                            <controls:LatexTextBlock Text="{Binding EditExplanation}" Foreground="{DynamicResource Brush.TextPrimary}" FontSize="14" TextLineHeight="22" FormulaFontSize="20" MinHeight="64" />
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="{Binding ErrorMessage}" Foreground="{DynamicResource Brush.Danger}" TextWrapping="Wrap" />
+                    <TextBlock Text="{Binding StatusMessage}" Foreground="{DynamicResource Brush.Success}" TextWrapping="Wrap" Margin="0,4,0,0" />
+                    <Button Content="Сохранить вопрос" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButton}" Margin="0,16,0,8" />
+                    <Button Content="Удалить" Command="{Binding DeleteCommand}" Style="{StaticResource DangerButton}" />
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,84 @@
+﻿<Window x:Class="MathTutor.Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Математический репетиторий" Width="1280" Height="820" MinWidth="1100" MinHeight="700"
+        WindowStartupLocation="CenterScreen">
+    <Grid Background="{DynamicResource Brush.AppBackground}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="280" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Background="{DynamicResource Brush.SidebarGradient}" BorderBrush="{DynamicResource Brush.Border}" BorderThickness="0,0,1,0"
+                Visibility="{Binding IsAuthenticated, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <DockPanel Margin="24">
+                <StackPanel DockPanel.Dock="Top">
+                    <Border Style="{StaticResource PremiumPanel}" Padding="18" Margin="0,0,0,22">
+                        <StackPanel>
+                            <TextBlock Text="MathTutor" Foreground="White" FontSize="26" FontWeight="Bold" />
+                            <TextBlock Text="Обучение математике" Foreground="#CCFFFFFF" FontSize="12" FontWeight="SemiBold" Margin="0,4,0,0" />
+                        </StackPanel>
+                    </Border>
+                    <ItemsControl ItemsSource="{Binding NavigationItems}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding Command}" Style="{StaticResource SecondaryButton}" HorizontalContentAlignment="Left" Margin="0,0,0,9" Content="{Binding Title}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
+                    <Border Style="{StaticResource SidebarUserCard}" Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="Текущая сессия" Style="{StaticResource Text.Eyebrow}" Margin="0,0,0,6" />
+                            <TextBlock Text="{Binding CurrentUserName}" Style="{StaticResource Text.H3}" />
+                            <TextBlock Text="{Binding CurrentUserRole}" Style="{StaticResource Text.Caption}" />
+                        </StackPanel>
+                    </Border>
+                    <Button Content="Выйти" Command="{Binding LogoutCommand}" Style="{StaticResource SecondaryButton}" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <Grid Grid.Column="1"
+              Visibility="{Binding IsAuthenticated, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Border Background="Transparent" Padding="34,26,34,12">
+                <Grid>
+                    <StackPanel>
+                        <TextBlock Text="Математический репетиторий" Style="{StaticResource Text.Eyebrow}" />
+                        <TextBlock Text="{Binding Title}" Style="{StaticResource Text.H1}" Margin="0,4,0,0" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Grid>
+                            <Button x:Name="SettingsButton" Content="Настройки" Command="{Binding ToggleSettingsCommand}" Style="{StaticResource SecondaryButton}" />
+                            <Popup IsOpen="{Binding IsSettingsOpen}" PlacementTarget="{Binding ElementName=SettingsButton}" Placement="Bottom" StaysOpen="False" AllowsTransparency="True">
+                                <Border Style="{StaticResource SurfaceCard}" Padding="18" MinWidth="230">
+                                    <StackPanel>
+                                        <TextBlock Text="Настройки" Style="{StaticResource Text.H3}" Margin="0,0,0,4" />
+                                        <TextBlock Text="{Binding CurrentThemeName, StringFormat=Текущая тема: {0}}" Style="{StaticResource Text.Caption}" Margin="0,0,0,12" />
+                                        <Button Content="Светлая тема" Command="{Binding SetLightThemeCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,0,8" />
+                                        <Button Content="Тёмная тема" Command="{Binding SetDarkThemeCommand}" Style="{StaticResource PrimaryButton}" />
+                                    </StackPanel>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <ContentControl Grid.Row="1" Content="{Binding CurrentViewModel}" Margin="34,14,34,34" />
+        </Grid>
+
+        <ContentControl Grid.ColumnSpan="2"
+                        Content="{Binding CurrentViewModel}"
+                        Margin="32"
+                        Visibility="{Binding IsAuthenticated, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+    </Grid>
+</Window>
+

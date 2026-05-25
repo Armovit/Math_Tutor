@@ -1,0 +1,122 @@
+<Window x:Class="MathTutor.Wpf.Views.TestResultsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Результаты теста"
+        Width="1080"
+        Height="760"
+        MinWidth="920"
+        MinHeight="620"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize">
+    <Grid Background="{DynamicResource Brush.AppBackground}" Margin="24">
+        <Border Style="{StaticResource ExperienceShell}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Style="{StaticResource PremiumPanel}" Margin="0,0,0,18">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <Border Style="{StaticResource FeatureChip}" HorizontalAlignment="Left" Margin="0,0,0,12">
+                                <TextBlock Text="Итог теста" Foreground="White" FontWeight="Bold" />
+                            </Border>
+                            <TextBlock Text="{Binding MaterialTitle}" Foreground="White" FontSize="30" FontWeight="Bold" TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding TopicLine}" Foreground="#E8FFFFFF" Margin="0,8,0,0" />
+                            <TextBlock Text="{Binding SummaryLine}" Foreground="#D8FFFFFF" Margin="0,14,0,0" TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding StatusLine}" Foreground="#C8FFFFFF" Margin="0,6,0,0" TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" MinWidth="220">
+                            <TextBlock Text="{Binding PercentLine}" Style="{StaticResource Text.Display}" HorizontalAlignment="Right" Foreground="White" />
+                            <TextBlock Text="{Binding GradeLine}" FontSize="28" FontWeight="Bold" HorizontalAlignment="Right" Foreground="White" Margin="0,4,0,0" />
+                            <TextBlock Text="{Binding ScoreLine}" FontSize="16" HorizontalAlignment="Right" Foreground="#E8FFFFFF" Margin="0,8,0,0" />
+                            <TextBlock Text="{Binding DurationLine}" FontSize="14" HorizontalAlignment="Right" Foreground="#C8FFFFFF" Margin="0,6,0,0" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Row="1" Style="{StaticResource SurfaceCard}">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Top" Text="Разбор по вопросам" Style="{StaticResource Text.H2}" Margin="0,0,0,14" />
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <ItemsControl ItemsSource="{Binding Questions}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Style="{StaticResource TestCard}" Margin="0,0,0,12">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Border Width="42" Height="42" CornerRadius="21" Margin="0,0,16,0" VerticalAlignment="Top">
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Setter Property="Background" Value="{DynamicResource Brush.DangerSoft}" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsCorrect}" Value="True">
+                                                                    <Setter Property="Background" Value="{DynamicResource Brush.SuccessSoft}" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsPartial}" Value="True">
+                                                                    <Setter Property="Background" Value="{DynamicResource Brush.WarningSoft}" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsPending}" Value="True">
+                                                                    <Setter Property="Background" Value="{DynamicResource Brush.PrimarySoft}" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <TextBlock Text="{Binding Number}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" FontSize="16" />
+                                                </Border>
+                                                <StackPanel Grid.Column="1">
+                                                    <TextBlock Text="{Binding TaskTitle}" Style="{StaticResource Text.H3}" TextWrapping="Wrap" />
+                                                    <TextBlock Text="{Binding AnswerLine, Mode=OneWay}" Margin="0,8,0,0" TextWrapping="Wrap" />
+                                                    <TextBlock Text="{Binding Feedback}" Foreground="{DynamicResource Brush.TextSecondary}" TextWrapping="Wrap" Margin="0,8,0,0" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="2" HorizontalAlignment="Right" Margin="16,0,0,0">
+                                                    <TextBlock Text="{Binding VerdictText}" FontWeight="Bold" HorizontalAlignment="Right">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Foreground" Value="{DynamicResource Brush.Danger}" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsCorrect}" Value="True">
+                                                                        <Setter Property="Foreground" Value="{DynamicResource Brush.Success}" />
+                                                                    </DataTrigger>
+                                                                    <DataTrigger Binding="{Binding IsPartial}" Value="True">
+                                                                        <Setter Property="Foreground" Value="{DynamicResource Brush.Warning}" />
+                                                                    </DataTrigger>
+                                                                    <DataTrigger Binding="{Binding IsPending}" Value="True">
+                                                                        <Setter Property="Foreground" Value="{DynamicResource Brush.Primary}" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                    <TextBlock Text="{Binding ScoreLine}" Foreground="{DynamicResource Brush.TextSecondary}" HorizontalAlignment="Right" Margin="0,6,0,0" />
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </DockPanel>
+                </Border>
+
+                <Button Grid.Row="2"
+                        Content="Закрыть"
+                        HorizontalAlignment="Right"
+                        Margin="0,18,0,0"
+                        Style="{StaticResource PrimaryButton}"
+                        Click="Close_Click"
+                        MinWidth="140" />
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

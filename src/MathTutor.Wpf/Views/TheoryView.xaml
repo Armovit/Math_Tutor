@@ -1,0 +1,109 @@
+<UserControl x:Class="MathTutor.Wpf.Views.TheoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:MathTutor.Wpf.Controls">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="360" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Border Style="{StaticResource GlowCard}" Margin="0,0,18,0">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Top" Margin="0,0,0,18">
+                    <Border Style="{StaticResource StatusPill}" HorizontalAlignment="Left" Margin="0,0,0,10">
+                        <TextBlock Text="База знаний" Foreground="{DynamicResource Brush.Primary}" FontWeight="Bold" />
+                    </Border>
+                    <TextBlock Text="Теория по темам" Style="{StaticResource Text.H2}" Margin="0,0,0,6" />
+                    <TextBlock Text="Выберите раздел и откройте отдельный режим чтения без лишнего шума." Style="{StaticResource Text.Body}" Margin="0,0,0,14" />
+                    <TextBlock Text="Поиск" Style="{StaticResource Text.Caption}" Margin="0,4,0,6" />
+                    <TextBox Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" ToolTip="Название, тема или описание" />
+                    <Expander Header="Дополнительные фильтры" Margin="0,10,0,0">
+                        <StackPanel Margin="0,10,0,0">
+                            <TextBlock Text="Тема" Style="{StaticResource Text.Caption}" Margin="0,0,0,6" />
+                            <TextBox Text="{Binding TopicFilter, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Text="Раздел" Style="{StaticResource Text.Caption}" Margin="0,10,0,6" />
+                            <TextBox Text="{Binding SectionFilter, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Text="Сложность" Style="{StaticResource Text.Caption}" Margin="0,10,0,6" />
+                            <ComboBox ItemsSource="{Binding DifficultyFilters}" SelectedItem="{Binding DifficultyFilter}" />
+                        </StackPanel>
+                    </Expander>
+                    <Button Content="Искать" Command="{Binding LoadCommand}" Style="{StaticResource SecondaryButton}" Margin="0,10,0,0" />
+                    <Button Content="Открыть красивое окно чтения" Click="OpenReader_Click" Style="{StaticResource PrimaryButton}" Margin="0,8,0,0" />
+                </StackPanel>
+
+                <TabControl ItemsSource="{Binding Topics}" SelectedItem="{Binding SelectedTopic}" ClipToBounds="True">
+                    <TabControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Header}" TextTrimming="CharacterEllipsis" MaxWidth="145" />
+                        </DataTemplate>
+                    </TabControl.ItemTemplate>
+                    <TabControl.ContentTemplate>
+                        <DataTemplate>
+                            <ItemsControl ItemsSource="{Binding Sections}" Margin="0,12,0,0" ClipToBounds="True">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="0,0,0,14">
+                                            <TextBlock Text="{Binding Header}" Style="{StaticResource Text.Caption}" Margin="4,0,0,8" />
+                                            <ListBox ItemsSource="{Binding Materials}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectedItem="{Binding DataContext.SelectedTheory, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                                                <ListBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border Style="{StaticResource TestCard}" Margin="0,0,0,12" HorizontalAlignment="Stretch" ClipToBounds="True">
+                                                            <StackPanel>
+                                                                <TextBlock Text="{Binding Title}" Style="{StaticResource Text.H3}" />
+                                                                <TextBlock Text="{Binding Description}" Style="{StaticResource Text.Body}" Margin="0,6,0,0" MaxHeight="56" />
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ListBox.ItemTemplate>
+                                            </ListBox>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </DataTemplate>
+                    </TabControl.ContentTemplate>
+                </TabControl>
+            </DockPanel>
+        </Border>
+
+        <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+                <Border Style="{StaticResource PremiumPanel}" Margin="0,0,0,18">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                            <Border Style="{StaticResource FeatureChip}" Margin="0,0,8,0">
+                                <TextBlock Text="{Binding SelectedTheory.Topic}" Foreground="White" FontWeight="Bold" FontSize="12" />
+                            </Border>
+                            <Border Style="{StaticResource FeatureChip}">
+                                <TextBlock Text="{Binding SelectedTheory.Section}" Foreground="White" FontWeight="SemiBold" FontSize="12" />
+                            </Border>
+                        </StackPanel>
+                        <TextBlock Text="{Binding SelectedTheory.Title}" Foreground="White" FontSize="32" FontWeight="Bold" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding SelectedTheory.Description}" Foreground="#E8FFFFFF" FontSize="15" TextWrapping="Wrap" Margin="0,10,0,0" />
+                        <Border Style="{StaticResource FloatingActionPanel}" HorizontalAlignment="Left" Margin="0,18,0,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Лучше читать в отдельном окне" Foreground="{DynamicResource Brush.TextSecondary}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                                <Button Content="Открыть" Click="OpenReader_Click" Style="{StaticResource PrimaryButton}" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource ReadingPaper}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Style="{StaticResource AccentStrip}" Margin="0,0,18,0" />
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="Материал для подготовки" Style="{StaticResource Text.Eyebrow}" />
+                            <controls:LatexTextBlock Text="{Binding SelectedTheory.TheoryContent}" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="16" TextLineHeight="28" FormulaFontSize="21" Margin="0,10,0,0" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

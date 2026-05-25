@@ -1,0 +1,187 @@
+﻿<UserControl x:Class="MathTutor.Wpf.Views.ReviewsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="400" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Border Style="{StaticResource GlowCard}" Margin="0,0,18,0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+                <Border Style="{StaticResource StatusPill}" HorizontalAlignment="Left" Margin="0,0,0,10">
+                    <TextBlock Text="Обратная связь" Foreground="{DynamicResource Brush.Primary}" FontWeight="Bold" />
+                </Border>
+                <TextBlock Text="Оставить отзыв" Style="{StaticResource Text.H2}" Margin="0,0,0,6" />
+                    <TextBlock Text="Оцените тему, тест, практику или конкретное задание." Style="{StaticResource Text.Body}" TextWrapping="Wrap" Margin="0,0,0,14" />
+
+                <StackPanel Visibility="{Binding CanAddReview, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock Text="Тема / тест / материал" Style="{StaticResource Text.Caption}" Margin="0,0,0,6" />
+                    <ComboBox ItemsSource="{Binding Materials}"
+                              SelectedItem="{Binding SelectedMaterial}"
+                              DisplayMemberPath="Title"
+                              Margin="0,0,0,12" />
+
+                    <TextBlock Text="Задание (необязательно)" Style="{StaticResource Text.Caption}" Margin="0,0,0,6" />
+                    <ComboBox ItemsSource="{Binding Tasks}"
+                              SelectedItem="{Binding SelectedTask}"
+                              DisplayMemberPath="Title"
+                              Margin="0,0,0,8"
+                              IsEnabled="{Binding HasSelectedMaterial}" />
+                    <Button Content="Отзыв к материалу целиком"
+                            Command="{Binding ClearTaskSelectionCommand}"
+                            Style="{StaticResource SecondaryButton}"
+                            HorizontalAlignment="Stretch"
+                            Margin="0,0,0,12" />
+
+                    <Border Style="{StaticResource InlinePanel}" Padding="12" Margin="0,0,0,12">
+                        <TextBlock Text="{Binding ReviewTargetHint}" Style="{StaticResource Text.Body}" TextWrapping="Wrap" />
+                    </Border>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="12" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="Сложность 1..5" Style="{StaticResource Text.Caption}" />
+                            <TextBox Text="{Binding DifficultyRating, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,0" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Полезность 1..5" Style="{StaticResource Text.Caption}" />
+                            <TextBox Text="{Binding UsefulnessRating, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,0" />
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock Text="Комментарий" Style="{StaticResource Text.Caption}" Margin="0,0,0,6" />
+                    <TextBox Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}"
+                             AcceptsReturn="True"
+                             Height="100"
+                             VerticalContentAlignment="Top"
+                             Margin="0,0,0,16" />
+
+                    <Button Content="Отправить отзыв" Command="{Binding AddReviewCommand}" Style="{StaticResource PrimaryButton}" />
+                </StackPanel>
+
+                <Border Style="{StaticResource InlinePanel}"
+                        Padding="16"
+                        Visibility="{Binding CanAddReview, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                    <TextBlock Text="Администратор просматривает отзывы всех пользователей. Оставлять отзывы могут ученики." Style="{StaticResource Text.Body}" TextWrapping="Wrap" />
+                </Border>
+
+                <TextBlock Text="{Binding StatusMessage}" Foreground="{DynamicResource Brush.Success}" Margin="0,14,0,0" TextWrapping="Wrap" />
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="{DynamicResource Brush.Danger}" Margin="0,4,0,0" TextWrapping="Wrap" />
+            </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <Border Grid.Column="1" Style="{StaticResource SurfaceCard}">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Top" Margin="0,0,0,16">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="Отзывы пользователей" Style="{StaticResource Text.H2}" />
+                            <TextBlock Text="{Binding ReviewsSummary}" Foreground="{DynamicResource Brush.TextSecondary}" Margin="0,4,0,0" />
+                        </StackPanel>
+                        <Button Grid.Column="1" Content="Обновить" Command="{Binding RefreshReviewsCommand}" Style="{StaticResource SecondaryButton}" />
+                    </Grid>
+
+                    <Grid Margin="0,16,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="180" />
+                            <ColumnDefinition Width="12" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="12" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="Тема" Style="{StaticResource Text.Caption}" Margin="0,0,0,6" />
+                            <ComboBox ItemsSource="{Binding TopicFilters}" SelectedItem="{Binding SelectedTopicFilter}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Материал / тест" Style="{StaticResource Text.Caption}" Margin="0,0,0,6" />
+                            <ComboBox ItemsSource="{Binding Materials}" SelectedItem="{Binding SelectedMaterialFilter}" DisplayMemberPath="Title" />
+                        </StackPanel>
+                        <Button Grid.Column="4"
+                                Content="Сбросить"
+                                Command="{Binding ResetReviewFiltersCommand}"
+                                Style="{StaticResource SecondaryButton}"
+                                VerticalAlignment="Bottom" />
+                    </Grid>
+                </StackPanel>
+
+                <TextBlock Text="Отзывов по выбранным фильтрам пока нет."
+                           Style="{StaticResource Text.Body}"
+                           TextAlignment="Center"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Visibility="{Binding HasReviews, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              Visibility="{Binding HasReviews, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl ItemsSource="{Binding Reviews}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource TestCard}" Margin="0,0,0,12">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding UserName}" Style="{StaticResource Text.H3}" />
+                                                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                                    <Border Style="{StaticResource StatusPill}" Margin="0,0,6,0">
+                                                        <TextBlock Text="{Binding TargetKind}" Foreground="{DynamicResource Brush.Primary}" FontWeight="SemiBold" FontSize="12" />
+                                                    </Border>
+                                                    <Border Style="{StaticResource StatusPill}">
+                                                        <TextBlock Text="{Binding MaterialTopic}" Foreground="{DynamicResource Brush.Info}" FontWeight="SemiBold" FontSize="12" />
+                                                    </Border>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding CreatedAtUtc, StringFormat={}{0:dd.MM.yyyy HH:mm}}"
+                                                       Foreground="{DynamicResource Brush.TextSecondary}"
+                                                       FontSize="12"
+                                                       Margin="16,0,0,0" />
+                                        </Grid>
+
+                                        <StackPanel Grid.Row="1" Margin="0,12,0,0">
+                                            <TextBlock Text="{Binding TargetTitle}" FontWeight="SemiBold" FontSize="16" TextWrapping="Wrap" />
+                                            <TextBlock Text="{Binding TargetContext}" Foreground="{DynamicResource Brush.TextSecondary}" TextWrapping="Wrap" Margin="0,4,0,0" />
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Row="2" Margin="0,12,0,0">
+                                            <TextBlock Text="{Binding Comment}" Style="{StaticResource Text.Body}" TextWrapping="Wrap" />
+                                            <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                                                <Border Style="{StaticResource StatusPill}" Margin="0,0,8,0">
+                                                    <TextBlock Text="{Binding DifficultyRating, StringFormat=Сложность: {0}/5}" Foreground="{DynamicResource Brush.Primary}" FontWeight="SemiBold" />
+                                                </Border>
+                                                <Border Style="{StaticResource StatusPill}">
+                                                    <TextBlock Text="{Binding UsefulnessRating, StringFormat=Полезность: {0}/5}" Foreground="{DynamicResource Brush.Success}" FontWeight="SemiBold" />
+                                                </Border>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </DockPanel>
+        </Border>
+    </Grid>
+</UserControl>
